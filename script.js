@@ -21,13 +21,14 @@ let maxNum = 100
 newGame.addEventListener('click', () => location.reload())
 
 function gameStart(gameDifficulty) {
+    console.log(randomNum);
     contentWrapper.prepend(newGame)
     currentRange.innerText = 'Current range:'
     numGuess.innerHTML = `<input onkeydown="numLimit(event)" onchange="numLimit(event)" id='input' type='number' class='form-control mx-1' />
     <button onclick='submitNum(event)' class='btn btn-info shadow-sm'>Submit</button>`
 
     btnsWrapper.innerHTML = `<div style="width: 100%; height: 50px;" class='bg-dark rounded my-4'>
-        <div style="width: 50%; position: relative; height: 50px;" class='bg-primary rounded'>
+        <div id='frontBox' style="width: 100%; position: relative; height: 50px; transition: all 1s;" class='bg-primary rounded'>
             <p id='min' style="position: absolute; left: -4px; bottom: 35px">0</p>
             <p id='max' style="position: absolute; right: -10px; bottom: 35px">100</p>
         </div>
@@ -40,14 +41,29 @@ function gameStart(gameDifficulty) {
     title.innerText = `Remaining chances: ${guessCount ? guessCount : ''}`
 }
 
+function boxFlexibility() {
+    let input = document.querySelector('#input')
+    input = input.value
+    const upperBox = document.querySelector('#frontBox')
+    let boxWidth = upperBox.style.width
+    if (input > randomNum) {
+        upperBox 
+        boxWidth = Number(input)
+        upperBox.style.width = `${boxWidth}%` 
+    } else if (input < randomNum) {
+        
+    }
+}
+
 function submitNum(event) {
     const input = document.querySelector('#input')
     const min = document.querySelector('#min')
     const max = document.querySelector('#max')
+    boxFlexibility()
     let playerGuess = input.value
-    if (Number(playerGuess) <= 50) {
+    if (Number(playerGuess) <= randomNum) {
         min.innerText = playerGuess
-    } else if (Number(playerGuess) > 50) {
+    } else if (Number(playerGuess) > randomNum) {
         max.innerText = playerGuess
     }
     if (guessCount - 1) {
@@ -66,12 +82,12 @@ function playerActive(playerGuess) {
         userMsg.innerText = 'You Win!'
     } else if (Number(playerGuess) <= randomNum) {
         userMsg.classList = 'text-warning'
-        userMsg.innerText = 'You guess too low!'
+        userMsg.innerText = 'Your guess too low!'
         guessCount -= 1
         title.innerText = `Remaining chances: ${guessCount}`
     } else if (Number(playerGuess) >= randomNum) {
         userMsg.classList = 'text-warning'
-        userMsg.innerText = 'You guess too high!'
+        userMsg.innerText = 'Your guess too high!'
         guessCount -= 1
         title.innerText = `Remaining chances: ${guessCount}`
     } 
