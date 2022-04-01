@@ -13,7 +13,6 @@ newGame.innerHTML = `<button class='btn btn-light shadow-sm'>New Game</button>`
 
 let randomNum = Math.floor(Math.random() * 100)
 let guessCount = 0
-
 let minNum = 0
 let maxNum = 100
 
@@ -21,18 +20,24 @@ let maxNum = 100
 newGame.addEventListener('click', () => location.reload())
 
 function gameStart(gameDifficulty) {
-    console.log(randomNum);
     contentWrapper.prepend(newGame)
     currentRange.innerText = 'Current range:'
-    numGuess.innerHTML = `<input onkeydown="numLimit(event)" onchange="numLimit(event)" id='input' type='number' class='form-control mx-1' />
-    <button onclick='submitNum(event)' class='btn btn-info shadow-sm'>Submit</button>`
+    numGuess.innerHTML = `<input placeholder="Guess" onkeydown="numLimit(event)" onchange="numLimit(event)" id='input' type='number' class='form-control mx-1' />
+                          <button onclick='submitNum(event)' class='btn btn-info shadow-sm'>Submit</button>`
 
-    btnsWrapper.innerHTML = `<div style="width: 100%; height: 50px;" class='bg-dark rounded my-4'>
-        <div id='frontBox' style="width: 100%; position: relative; height: 50px; transition: all 1s;" class='bg-primary rounded'>
-            <p id='min' style="position: absolute; left: -4px; bottom: 35px">0</p>
-            <p id='max' style="position: absolute; right: -10px; bottom: 35px">100</p>
-        </div>
-    </div>`
+    btnsWrapper.innerHTML = `<div style="width: 100%; height: 50px; position: relative;" class='bg-dark my-4'>
+                                <div id='frontBox' style="width: 100%; position: absolute; height: 50px; transition: all 1s;" class='bg-primary'>
+                                    <div style="position: relative;">
+                                        <p id='max' style="position: absolute; right: -10px; bottom: -15px">100</p>
+                                    </div>
+                                </div>
+                                <div id="leftSideSlider" style="height: 50px; width: 0; transition: all 1s; position: absolute;" class="bg-dark">
+                                    <div style="position: relative;">
+                                        <p id='min' style="position: absolute; right: -5px; bottom: -15px;">0</p>
+                                    </div>
+                                </div>
+                            </div>`
+
     if (gameDifficulty === 'easy') {
         guessCount = 10
     } else {
@@ -41,27 +46,25 @@ function gameStart(gameDifficulty) {
     title.innerText = `Remaining chances: ${guessCount ? guessCount : ''}`
 }
 
-function boxFlexibility() {
-    let input = document.querySelector('#input')
-    input = input.value
+function boxFlexibility(playerGuess) {
     const upperBox = document.querySelector('#frontBox')
+    const leftSideSlider = document.querySelector('#leftSideSlider')
     let boxWidth = upperBox.style.width
-    if (input > randomNum) {
-        upperBox 
-        boxWidth = Number(input)
-        upperBox.style.width = `${boxWidth}%` 
-    } else if (input < randomNum) {
-        
-    }
+    if (playerGuess > randomNum) {
+        boxWidth = Number(playerGuess)
+        upperBox.style.width = `${boxWidth}%`
+    } else if (playerGuess < randomNum) {
+        leftSideSlider.style.width = `${playerGuess}%`
+    } 
 }
 
 function submitNum(event) {
     const input = document.querySelector('#input')
     const min = document.querySelector('#min')
     const max = document.querySelector('#max')
-    boxFlexibility()
     let playerGuess = input.value
-    if (Number(playerGuess) <= randomNum) {
+    boxFlexibility(playerGuess)
+    if (Number(playerGuess) < randomNum) {
         min.innerText = playerGuess
     } else if (Number(playerGuess) > randomNum) {
         max.innerText = playerGuess
